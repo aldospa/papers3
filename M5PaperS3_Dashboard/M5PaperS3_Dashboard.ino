@@ -11,7 +11,7 @@
  * - Status monitoring and display
  * 
  * Default Credentials:
- * - WiFi SSID: "CJAK2"
+ * - WiFi SSID: "CJAK2_2G"
  * - WiFi Password: "CJak55998718"
  * - MQTT Server: "192.168.0.82"
  * - MQTT Username: "admin"
@@ -25,7 +25,7 @@
 #include <PubSubClient.h>
 
 // WiFi Configuration
-const char* WIFI_SSID = "CJAK2";
+const char* WIFI_SSID = "CJAK2_2G";
 const char* WIFI_PASSWORD = "CJak55998718";
 
 // MQTT Configuration
