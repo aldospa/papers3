@@ -197,13 +197,13 @@ bool queryDeviceStatus(int deviceIndex) {
   Serial.print(DEVICE_MACS[deviceIndex]);
   Serial.println(")");
   
-  bool currentState = false;
-  bool success = switchC6.sendStatusQueryWithResponse(DEVICE_MACS[deviceIndex], 10000, &currentState);
+  SwitchC6ParsedData_t response;
+  bool success = switchC6.sendStatusQueryWithResponse(DEVICE_MACS[deviceIndex], 10000, &response);
   
   if (success) {
-    deviceStates[deviceIndex] = currentState;
+    deviceStates[deviceIndex] = response.state;
     Serial.print("Device status: ");
-    Serial.println(currentState ? "ON" : "OFF");
+    Serial.println(response.state ? "ON" : "OFF");
   } else {
     Serial.println("Failed to query device status");
   }
