@@ -1,0 +1,35 @@
+# Arduino IDE
+*.hex
+*.elf
+*.map
+*.lst
+
+# PlatformIO
+.pio/
+.vscode/
+.pioenvs/
+.piolibdeps/
+lib/
+.clang_complete
+.gcc-flags.json
+
+# Build artifacts
+build/
+*.o
+*.a
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Editor files
+*.bak
+*.orig
