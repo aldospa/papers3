@@ -5,6 +5,7 @@ A modern dashboard controller for the M5PaperS3 board that controls 4 M5SwitchC6
 ## Features
 
 - **4 Toggle Switches**: Control 4 M5SwitchC6 devices independently
+- **E-Paper Display**: Real-time status display on M5PaperS3 screen showing device states
 - **Web Interface**: Modern, responsive web UI for remote control
 - **WiFi Connectivity**: Automatic WiFi connection with reconnection support
 - **MQTT Support**: MQTT-enabled by default for device communication
@@ -62,6 +63,17 @@ The sketch is configured for 4 M5SwitchC6 devices with the following MAC address
 
 ## Usage
 
+### E-Paper Display
+
+The M5PaperS3 built-in e-paper display shows:
+- **Connection Status**: WiFi and MQTT connection indicators
+- **IP Address**: Current device IP address
+- **Device Status**: Real-time ON/OFF status for all 4 switches
+- **MAC Addresses**: Each device's MAC address
+- **Last Update Time**: Timestamp of the last status update
+
+The display automatically updates every 2 seconds and immediately after any device state change, ensuring minimal delay between toggle actions and display updates.
+
 ### Web Interface
 
 Once the device boots up and connects to WiFi, access the web interface at:
@@ -70,7 +82,7 @@ Once the device boots up and connects to WiFi, access the web interface at:
 http://<device-ip-address>
 ```
 
-The IP address will be displayed in the Serial Monitor.
+The IP address will be displayed in the Serial Monitor and on the e-paper display.
 
 #### Web Interface Features:
 

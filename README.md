@@ -9,6 +9,7 @@ This project provides a complete Arduino sketch for the M5PaperS3 board that cre
 ## Features
 
 - 🎛️ **4 Device Control**: Manage up to 4 M5SwitchC6 devices independently
+- 📺 **E-Paper Display**: Real-time status display on M5PaperS3 screen showing device states
 - 🌐 **Web Interface**: Modern, responsive web UI for remote control
 - 📡 **WiFi Connectivity**: Automatic connection with reconnection support
 - 📊 **MQTT Support**: Optional MQTT integration for advanced automation

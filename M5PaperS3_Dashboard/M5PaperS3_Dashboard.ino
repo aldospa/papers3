@@ -7,6 +7,7 @@
  * Features:
  * - 4 toggle switches for controlling M5SwitchC6 devices
  * - Web interface for remote control
+ * - E-paper display showing real-time device status
  * - WiFi and MQTT connectivity
  * - Status monitoring and display
  * 
@@ -63,6 +64,10 @@ bool mqttEnabled = true;
 bool mqttConnected = false;
 unsigned long lastStatusUpdate = 0;
 const unsigned long STATUS_UPDATE_INTERVAL = 5000; // 5 seconds
+
+// Display tracking
+unsigned long lastDisplayUpdate = 0;
+const unsigned long DISPLAY_UPDATE_INTERVAL = 2000; // 2 seconds
 
 /**
  * Setup WiFi Connection
@@ -154,6 +159,7 @@ bool turnDeviceOn(int deviceIndex) {
   if (success) {
     deviceStates[deviceIndex] = true;
     Serial.println("Device turned ON successfully");
+    displayStatus(); // Update display immediately
   } else {
     Serial.println("Failed to turn ON device");
   }
@@ -178,6 +184,7 @@ bool turnDeviceOff(int deviceIndex) {
   if (success) {
     deviceStates[deviceIndex] = false;
     Serial.println("Device turned OFF successfully");
+    displayStatus(); // Update display immediately
   } else {
     Serial.println("Failed to turn OFF device");
   }
@@ -204,6 +211,7 @@ bool queryDeviceStatus(int deviceIndex) {
     deviceStates[deviceIndex] = response.switchState;
     Serial.print("Device status: ");
     Serial.println(response.switchState ? "ON" : "OFF");
+    displayStatus(); // Update display immediately
   } else {
     Serial.println("Failed to query device status");
   }
@@ -219,6 +227,86 @@ void updateAllDeviceStatuses() {
     queryDeviceStatus(i);
     delay(100); // Small delay between queries
   }
+}
+
+/**
+ * Display status on M5PaperS3 screen
+ */
+void displayStatus() {
+  M5.Display.clear();
+  M5.Display.setTextSize(1);
+  M5.Display.setTextColor(BLACK, WHITE);
+  
+  // Title
+  M5.Display.setCursor(10, 10);
+  M5.Display.setTextSize(2);
+  M5.Display.println("M5PaperS3 Dashboard");
+  
+  // Connection status
+  M5.Display.setCursor(10, 40);
+  M5.Display.setTextSize(1);
+  M5.Display.print("WiFi: ");
+  M5.Display.println(wifiConnected ? "Connected" : "Disconnected");
+  
+  M5.Display.setCursor(10, 55);
+  M5.Display.print("MQTT: ");
+  M5.Display.println(mqttConnected ? "Connected" : "Disconnected");
+  
+  if (wifiConnected) {
+    M5.Display.setCursor(10, 70);
+    M5.Display.print("IP: ");
+    M5.Display.println(WiFi.localIP().toString());
+  }
+  
+  // Device status
+  M5.Display.setCursor(10, 95);
+  M5.Display.setTextSize(2);
+  M5.Display.println("Device Status:");
+  
+  M5.Display.setTextSize(1);
+  for (int i = 0; i < 4; i++) {
+    int yPos = 120 + (i * 30);
+    M5.Display.setCursor(10, yPos);
+    M5.Display.print(deviceNames[i]);
+    M5.Display.print(": ");
+    
+    // Draw status indicator
+    if (deviceStates[i]) {
+      M5.Display.print("[ON]");
+    } else {
+      M5.Display.print("[OFF]");
+    }
+    
+    // Show MAC address
+    M5.Display.setCursor(15, yPos + 15);
+    M5.Display.print(DEVICE_MACS[i]);
+  }
+  
+  // Last update time
+  M5.Display.setCursor(10, 250);
+  M5.Display.print("Last update: ");
+  M5.Display.print(millis() / 1000);
+  M5.Display.print("s");
+}
+
+/**
+ * Initialize display
+ */
+void setupDisplay() {
+  M5.Display.setRotation(1);
+  M5.Display.fillScreen(WHITE);
+  M5.Display.setTextColor(BLACK);
+  M5.Display.setTextSize(1);
+  
+  // Show initialization message
+  M5.Display.setCursor(10, 10);
+  M5.Display.setTextSize(2);
+  M5.Display.println("Initializing...");
+  M5.Display.setTextSize(1);
+  M5.Display.setCursor(10, 40);
+  M5.Display.println("M5PaperS3 Dashboard");
+  
+  Serial.println("Display initialized");
 }
 
 /**
@@ -386,6 +474,9 @@ void setup() {
   delay(1000);
   Serial.println("\n=== M5PaperS3 Dashboard Controller ===");
   
+  // Initialize display
+  setupDisplay();
+  
   // Initialize M5SwitchC6
   switchC6.begin();
   Serial.println("M5SwitchC6 initialized");
@@ -408,6 +499,9 @@ void setup() {
   // Query initial device statuses
   Serial.println("\nQuerying initial device statuses...");
   updateAllDeviceStatuses();
+  
+  // Display initial status
+  displayStatus();
   
   Serial.println("\n=== Setup Complete ===");
   Serial.println("Dashboard ready for operation");
@@ -438,6 +532,12 @@ void loop() {
       Serial.println("WiFi disconnected, attempting to reconnect...");
       setupWiFi();
     }
+  }
+  
+  // Periodic display updates
+  if (millis() - lastDisplayUpdate > DISPLAY_UPDATE_INTERVAL) {
+    lastDisplayUpdate = millis();
+    displayStatus();
   }
   
   // Update M5 device
