@@ -91,11 +91,11 @@ void setup() {
   delay(2000);
   
   Serial.println("\nQuerying device status...");
-  M5SwitchC6::SwitchResponse response;
-  success = switchC6.sendStatusQueryWithResponse(TEST_DEVICE_MAC, 10000, &response);
+  bool currentState = false;
+  success = switchC6.sendStatusQueryWithResponse(TEST_DEVICE_MAC, 10000, &currentState);
   if (success) {
     Serial.print("✓ Device status: ");
-    Serial.println(response.state ? "ON" : "OFF");
+    Serial.println(currentState ? "ON" : "OFF");
   } else {
     Serial.println("✗ Failed to query device status");
   }

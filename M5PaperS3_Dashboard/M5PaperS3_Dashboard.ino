@@ -21,7 +21,7 @@
 #include <M5Unified.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <M5Switchc6.h>
+#include <M5SwitchC6.h>
 #include <PubSubClient.h>
 
 // WiFi Configuration
@@ -197,13 +197,13 @@ bool queryDeviceStatus(int deviceIndex) {
   Serial.print(DEVICE_MACS[deviceIndex]);
   Serial.println(")");
   
-  M5SwitchC6::SwitchResponse response;
-  bool success = switchC6.sendStatusQueryWithResponse(DEVICE_MACS[deviceIndex], 10000, &response);
+  bool currentState = false;
+  bool success = switchC6.sendStatusQueryWithResponse(DEVICE_MACS[deviceIndex], 10000, &currentState);
   
   if (success) {
-    deviceStates[deviceIndex] = response.state;
+    deviceStates[deviceIndex] = currentState;
     Serial.print("Device status: ");
-    Serial.println(response.state ? "ON" : "OFF");
+    Serial.println(currentState ? "ON" : "OFF");
   } else {
     Serial.println("Failed to query device status");
   }
