@@ -21,7 +21,7 @@
 #include <M5Unified.h>
 #include <WiFi.h>
 #include <WebServer.h>
-#include <M5SwitchC6.h>
+#include <M5Switchc6.h>
 #include <PubSubClient.h>
 
 // WiFi Configuration
