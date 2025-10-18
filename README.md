@@ -21,9 +21,10 @@ This project provides a complete Arduino sketch for the M5PaperS3 board that cre
 1. Navigate to the `M5PaperS3_Dashboard` directory
 2. Open `M5PaperS3_Dashboard.ino` in Arduino IDE
 3. Install required libraries (M5Unified, M5SwitchC6, PubSubClient)
-4. Update device MAC addresses in the sketch
-5. Upload to your M5PaperS3 board
-6. Access the web interface at the IP address shown in Serial Monitor
+4. (Optional) Test display first with `examples/DisplayTest/DisplayTest.ino`
+5. Update device MAC addresses in the sketch
+6. Upload to your M5PaperS3 board
+7. Access the web interface at the IP address shown in Serial Monitor and on the display
 
 ## Documentation
 
@@ -52,7 +53,8 @@ M5PaperS3_Dashboard/
 ├── DOCUMENTATION.md            # Technical docs
 ├── platformio.ini             # PlatformIO config
 └── examples/
-    └── SimpleTest/            # Test sketch
+    ├── SimpleTest/            # Basic functionality test
+    └── DisplayTest/           # Display functionality test
 ```
 
 ## Requirements

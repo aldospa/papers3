@@ -58,8 +58,9 @@ The sketch is configured for 4 M5SwitchC6 devices with the following MAC address
 1. Open the sketch in Arduino IDE
 2. Select **M5Stack-PAPER** as the board (Tools > Board > ESP32 Arduino > M5Stack-PAPER)
 3. Install required libraries
-4. Update device MAC addresses if needed
-5. Upload to your M5PaperS3 board
+4. (Optional) Test the display first using `examples/DisplayTest/DisplayTest.ino`
+5. Update device MAC addresses if needed
+6. Upload to your M5PaperS3 board
 
 ## Usage
 
@@ -244,6 +245,12 @@ const String DEVICE_MACS[4] = {
 - Check Serial Monitor for the IP address
 - Ensure you're on the same network as the M5PaperS3
 - Try accessing via the IP address directly
+
+### Display Not Working
+- Run the `examples/DisplayTest/DisplayTest.ino` sketch to verify display functionality
+- Check that M5Unified library is properly installed
+- Verify board selection is M5Stack-PAPER
+- E-paper displays have slower refresh rates - wait a few seconds for updates
 
 ## License
 
