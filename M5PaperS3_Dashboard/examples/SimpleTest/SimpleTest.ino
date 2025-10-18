@@ -95,7 +95,7 @@ void setup() {
   success = switchC6.sendStatusQueryWithResponse(TEST_DEVICE_MAC, 10000, &response);
   if (success) {
     Serial.print("✓ Device status: ");
-    Serial.println(response.switch_state ? "ON" : "OFF");
+    Serial.println(response.switchState ? "ON" : "OFF");
   } else {
     Serial.println("✗ Failed to query device status");
   }

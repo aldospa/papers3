@@ -201,11 +201,9 @@ bool queryDeviceStatus(int deviceIndex) {
   bool success = switchC6.sendStatusQueryWithResponse(DEVICE_MACS[deviceIndex], 10000, &response);
   
   if (success) {
-    // The struct may have fields like: switch_state, status, or data
-    // Access the switch state from the response structure
-    deviceStates[deviceIndex] = response.switch_state;
+    deviceStates[deviceIndex] = response.switchState;
     Serial.print("Device status: ");
-    Serial.println(response.switch_state ? "ON" : "OFF");
+    Serial.println(response.switchState ? "ON" : "OFF");
   } else {
     Serial.println("Failed to query device status");
   }
