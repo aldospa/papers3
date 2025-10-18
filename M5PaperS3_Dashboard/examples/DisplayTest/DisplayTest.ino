@@ -12,6 +12,9 @@
 
 #include <M5Unified.h>
 
+// Display configuration
+#define DISPLAY_ROTATION 1  // Display rotation (0-3)
+
 void setup() {
   // Initialize M5
   M5.begin();
@@ -24,7 +27,7 @@ void setup() {
   
   // Test 1: Display Initialization
   Serial.println("Test 1: Display Initialization");
-  M5.Display.setRotation(1);
+  M5.Display.setRotation(DISPLAY_ROTATION);
   M5.Display.fillScreen(WHITE);
   M5.Display.setTextColor(BLACK);
   Serial.println("✓ Display initialized");

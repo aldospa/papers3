@@ -24,7 +24,7 @@ This project provides a complete Arduino sketch for the M5PaperS3 board that cre
 4. (Optional) Test display first with `examples/DisplayTest/DisplayTest.ino`
 5. Update device MAC addresses in the sketch
 6. Upload to your M5PaperS3 board
-7. Access the web interface at the IP address shown in Serial Monitor and on the display
+7. Access the web interface at the IP address shown in Serial Monitor and on the e-paper display
 
 ## Documentation
 

@@ -73,7 +73,7 @@ The display should show:
 
 ### Display Doesn't Update
 - E-paper displays have slower refresh rates (this is normal)
-- Wait a few seconds for the display to update
+- Wait 5-10 seconds for the e-paper display to refresh completely
 - Check Serial Monitor for update messages
 
 ## Next Steps
