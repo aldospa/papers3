@@ -10,13 +10,15 @@
 
 ### E-Paper Display
 - **Real-Time Status Display**: Built-in M5PaperS3 e-paper screen shows live device status
+- **Full-Screen Layout**: Large fonts and graphics utilizing the entire 540x960 pixel display
+- **Touch-Enabled Controls**: Tap toggle switches directly on the touchscreen to control devices
 - **Connection Indicators**: Visual WiFi and MQTT connection status
-- **Device Status Cards**: Each device shown with ON/OFF state and MAC address
+- **Large Toggle Switches**: Each device shown with prominent graphical ON/OFF toggle (140x70 pixels)
 - **IP Address Display**: Current network IP address visible on screen
 - **Minimal Delay**: Display updates immediately after state changes
 - **Periodic Refresh**: Automatic updates every 2 seconds
 - **Low Power Consumption**: E-paper display maintains status even when not refreshing
-- **Mirror Web Interface**: Display format matches web dashboard for consistency
+- **Intuitive Interface**: No web browser needed - control everything from the touchscreen
 
 ### Web Interface
 - **Modern UI Design**: 

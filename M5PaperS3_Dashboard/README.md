@@ -66,16 +66,19 @@ The sketch is configured for 4 M5SwitchC6 devices with the following MAC address
 
 ### E-Paper Display
 
-The M5PaperS3 built-in e-paper display shows status information with **white text on black background** for optimal visibility and brightness:
+The M5PaperS3 built-in e-paper display shows status information with **white text on black background** for optimal visibility and brightness, using **large fonts that fill the entire screen**:
 - **Connection Status**: WiFi and MQTT connection indicators
 - **IP Address**: Current device IP address
-- **Device Status**: Real-time status for all 4 switches with **graphical toggle indicators**
+- **Device Status**: Real-time status for all 4 switches with **large graphical toggle indicators**
   - ON state: Toggle filled on the right side with highlight
   - OFF state: Toggle empty on the left side
+  - **Touch-enabled**: Tap any toggle switch on the screen to control the device directly
 - **MAC Addresses**: Each device's MAC address
 - **Last Update Time**: Timestamp of the last status update
 
 The display automatically updates every 2 seconds and immediately after any device state change, ensuring minimal delay between toggle actions and display updates. The graphical toggle switches provide clear visual feedback matching modern UI design patterns.
+
+**Touch Controls**: Simply tap on any of the 4 large toggle switches displayed on the screen to turn devices on or off. No need to use the web interface - full control is available directly from the M5PaperS3 touchscreen!
 
 ### Web Interface
 

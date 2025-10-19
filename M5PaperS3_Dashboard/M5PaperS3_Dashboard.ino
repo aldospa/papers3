@@ -69,6 +69,13 @@ const unsigned long STATUS_UPDATE_INTERVAL = 5000; // 5 seconds
 unsigned long lastDisplayUpdate = 0;
 const unsigned long DISPLAY_UPDATE_INTERVAL = 2000; // 2 seconds
 
+// Touch areas for toggle switches (in landscape mode)
+struct TouchArea {
+  int x, y, width, height;
+  int deviceIndex;
+};
+TouchArea touchAreas[4];
+
 /**
  * Setup WiFi Connection
  */
@@ -231,75 +238,97 @@ void updateAllDeviceStatuses() {
 
 /**
  * Display status on M5PaperS3 screen
+ * Scaled to use larger fonts and whole screen (540x960 in landscape)
  */
 void displayStatus() {
   // Fill screen with black for white-on-black display
   M5.Display.fillScreen(BLACK);
-  M5.Display.setTextSize(1);
   M5.Display.setTextColor(WHITE, BLACK);
   M5.Display.setBrightness(255); // Set maximum brightness
   
-  // Title
-  M5.Display.setCursor(10, 10);
-  M5.Display.setTextSize(2);
-  M5.Display.println("M5PaperS3 Dashboard");
+  // Title - larger font
+  M5.Display.setCursor(20, 20);
+  M5.Display.setTextSize(3);
+  M5.Display.println("M5PaperS3");
+  M5.Display.setCursor(20, 60);
+  M5.Display.println("Dashboard");
   
-  // Connection status
-  M5.Display.setCursor(10, 40);
-  M5.Display.setTextSize(1);
+  // Connection status - medium font
+  M5.Display.setTextSize(2);
+  M5.Display.setCursor(20, 120);
   M5.Display.print("WiFi: ");
   M5.Display.println(wifiConnected ? "Connected" : "Disconnected");
   
-  M5.Display.setCursor(10, 55);
+  M5.Display.setCursor(20, 150);
   M5.Display.print("MQTT: ");
   M5.Display.println(mqttConnected ? "Connected" : "Disconnected");
   
   if (wifiConnected) {
-    M5.Display.setCursor(10, 70);
+    M5.Display.setCursor(20, 180);
     M5.Display.print("IP: ");
     M5.Display.println(WiFi.localIP().toString());
   }
   
-  // Device status
-  M5.Display.setCursor(10, 95);
-  M5.Display.setTextSize(2);
-  M5.Display.println("Device Status:");
+  // Device status - larger switches using full width
+  M5.Display.setCursor(20, 240);
+  M5.Display.setTextSize(3);
+  M5.Display.println("Devices:");
   
-  M5.Display.setTextSize(1);
+  // Draw 4 large toggle switches - each using more vertical space
   for (int i = 0; i < 4; i++) {
-    int yPos = 120 + (i * 40);
-    M5.Display.setCursor(10, yPos);
+    int yPos = 300 + (i * 140);
+    
+    // Device name - larger font
+    M5.Display.setCursor(30, yPos);
+    M5.Display.setTextSize(2);
     M5.Display.print(deviceNames[i]);
     
-    // Draw graphical toggle switch indicator
-    int switchX = 200;
-    int switchY = yPos - 2;
-    int switchWidth = 40;
-    int switchHeight = 20;
-    int toggleRadius = 8;
+    // Draw large graphical toggle switch
+    int switchX = 320;
+    int switchY = yPos - 5;
+    int switchWidth = 140;
+    int switchHeight = 70;
+    int toggleRadius = 28;
+    
+    // Store touch area for this switch
+    touchAreas[i].x = switchX;
+    touchAreas[i].y = switchY;
+    touchAreas[i].width = switchWidth;
+    touchAreas[i].height = switchHeight;
+    touchAreas[i].deviceIndex = i;
     
     // Draw switch background (rounded rectangle)
-    M5.Display.drawRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
+    M5.Display.drawRoundRect(switchX, switchY, switchWidth, switchHeight, 20, WHITE);
+    M5.Display.drawRoundRect(switchX + 1, switchY + 1, switchWidth - 2, switchHeight - 2, 19, WHITE);
     
     if (deviceStates[i]) {
       // ON state - fill background and draw toggle on right
-      M5.Display.fillRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
-      M5.Display.fillCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, BLACK);
-      M5.Display.drawCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, WHITE);
+      M5.Display.fillRoundRect(switchX + 2, switchY + 2, switchWidth - 4, switchHeight - 4, 18, WHITE);
+      M5.Display.fillCircle(switchX + switchWidth - toggleRadius - 10, switchY + switchHeight / 2, toggleRadius, BLACK);
+      M5.Display.drawCircle(switchX + switchWidth - toggleRadius - 10, switchY + switchHeight / 2, toggleRadius, WHITE);
+      M5.Display.drawCircle(switchX + switchWidth - toggleRadius - 10, switchY + switchHeight / 2, toggleRadius - 1, WHITE);
     } else {
       // OFF state - draw toggle on left
-      M5.Display.fillCircle(switchX + toggleRadius + 4, switchY + switchHeight / 2, toggleRadius, WHITE);
+      M5.Display.fillCircle(switchX + toggleRadius + 10, switchY + switchHeight / 2, toggleRadius, WHITE);
+      M5.Display.fillCircle(switchX + toggleRadius + 10, switchY + switchHeight / 2, toggleRadius - 2, BLACK);
+      M5.Display.drawCircle(switchX + toggleRadius + 10, switchY + switchHeight / 2, toggleRadius, WHITE);
     }
     
-    // Show MAC address
-    M5.Display.setCursor(15, yPos + 18);
+    // Show MAC address below device name
+    M5.Display.setCursor(30, yPos + 35);
     M5.Display.setTextSize(1);
     M5.Display.print(DEVICE_MACS[i]);
+    
+    // Show ON/OFF text
+    M5.Display.setCursor(30, yPos + 55);
+    M5.Display.setTextSize(2);
+    M5.Display.print(deviceStates[i] ? "ON" : "OFF");
   }
   
-  // Last update time
-  M5.Display.setCursor(10, 280);
-  M5.Display.print("Last update: ");
+  // Last update time at bottom
+  M5.Display.setCursor(20, 900);
+  M5.Display.setTextSize(1);
+  M5.Display.print("Updated: ");
   M5.Display.print(millis() / 1000);
   M5.Display.print("s");
 }
@@ -315,14 +344,48 @@ void setupDisplay() {
   M5.Display.setTextSize(1);
   
   // Show initialization message
-  M5.Display.setCursor(10, 10);
-  M5.Display.setTextSize(2);
+  M5.Display.setCursor(20, 20);
+  M5.Display.setTextSize(3);
   M5.Display.println("Initializing...");
-  M5.Display.setTextSize(1);
-  M5.Display.setCursor(10, 40);
+  M5.Display.setTextSize(2);
+  M5.Display.setCursor(20, 80);
   M5.Display.println("M5PaperS3 Dashboard");
   
   Serial.println("Display initialized");
+}
+
+/**
+ * Handle touch input on toggle switches
+ */
+void handleTouch() {
+  auto touch = M5.Touch.getDetail();
+  
+  if (touch.wasPressed()) {
+    int touchX = touch.x;
+    int touchY = touch.y;
+    
+    // Check if touch is within any toggle switch area
+    for (int i = 0; i < 4; i++) {
+      if (touchX >= touchAreas[i].x && 
+          touchX <= touchAreas[i].x + touchAreas[i].width &&
+          touchY >= touchAreas[i].y && 
+          touchY <= touchAreas[i].y + touchAreas[i].height) {
+        
+        // Toggle the device state
+        int deviceIndex = touchAreas[i].deviceIndex;
+        Serial.print("Touch detected on ");
+        Serial.println(deviceNames[deviceIndex]);
+        
+        if (deviceStates[deviceIndex]) {
+          turnDeviceOff(deviceIndex);
+        } else {
+          turnDeviceOn(deviceIndex);
+        }
+        
+        break; // Only handle one touch at a time
+      }
+    }
+  }
 }
 
 /**
@@ -556,8 +619,9 @@ void loop() {
     displayStatus();
   }
   
-  // Update M5 device
+  // Update M5 device and handle touch
   M5.update();
+  handleTouch();
   
   delay(10);
 }

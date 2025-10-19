@@ -161,20 +161,31 @@ Generates HTML for dashboard:
 ### Display Functions
 
 #### `displayStatus()`
-Updates e-paper display with current status:
-- Shows dashboard title
-- Displays WiFi and MQTT connection status
+Updates e-paper display with current status using full-screen layout:
+- Shows dashboard title with large fonts (size 3)
+- Displays WiFi and MQTT connection status (size 2)
 - Shows device IP address
-- Lists all 4 devices with ON/OFF status
-- Displays MAC addresses for each device
+- Lists all 4 devices with large graphical toggle switches (140x70 pixels each)
+- Displays MAC addresses and ON/OFF state for each device
 - Shows last update timestamp
+- Stores touch areas for each toggle switch
+- Utilizes entire 540x960 pixel screen with scaled fonts
 - Called immediately after state changes for minimal delay
 
 #### `setupDisplay()`
 Initializes the display hardware:
 - Configures display rotation
-- Sets up text rendering
-- Shows initialization screen
+- Sets up text rendering with white-on-black color scheme
+- Sets maximum brightness (255)
+- Shows initialization screen with large fonts
+
+#### `handleTouch()`
+Processes touch input on toggle switches:
+- Reads touch coordinates from M5.Touch
+- Checks if touch falls within any toggle switch area
+- Toggles the corresponding device on/off when touched
+- Provides direct device control from the touchscreen
+- Logs touch events to Serial for debugging
 
 ### Main Loop Function
 
@@ -186,6 +197,7 @@ Main execution loop:
 - Checks WiFi connection
 - Updates display every 2 seconds
 - Updates M5 device state
+- Handles touch input for toggle switches
 
 ## Data Structures
 
