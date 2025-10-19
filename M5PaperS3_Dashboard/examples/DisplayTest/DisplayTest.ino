@@ -28,8 +28,9 @@ void setup() {
   // Test 1: Display Initialization
   Serial.println("Test 1: Display Initialization");
   M5.Display.setRotation(DISPLAY_ROTATION);
-  M5.Display.fillScreen(WHITE);
-  M5.Display.setTextColor(BLACK);
+  M5.Display.fillScreen(BLACK); // Black background
+  M5.Display.setTextColor(WHITE, BLACK); // White text on black
+  M5.Display.setBrightness(255); // Maximum brightness
   Serial.println("✓ Display initialized");
   
   // Test 2: Basic Text Rendering
@@ -52,7 +53,7 @@ void setup() {
   M5.Display.print("MQTT: Not Connected");
   Serial.println("✓ Status information displayed");
   
-  // Test 4: Display Device Status
+  // Test 4: Display Device Status with Graphical Toggles
   Serial.println("\nTest 4: Display Device Status");
   M5.Display.setCursor(10, 125);
   M5.Display.setTextSize(2);
@@ -63,17 +64,34 @@ void setup() {
   bool deviceStates[4] = {true, false, true, false};
   
   for (int i = 0; i < 4; i++) {
-    int yPos = 150 + (i * 25);
+    int yPos = 150 + (i * 30);
     M5.Display.setCursor(10, yPos);
     M5.Display.print(deviceNames[i]);
-    M5.Display.print(": ");
-    M5.Display.print(deviceStates[i] ? "[ON]" : "[OFF]");
+    
+    // Draw graphical toggle switch
+    int switchX = 150;
+    int switchY = yPos - 2;
+    int switchWidth = 40;
+    int switchHeight = 20;
+    int toggleRadius = 8;
+    
+    M5.Display.drawRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
+    
+    if (deviceStates[i]) {
+      // ON state
+      M5.Display.fillRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
+      M5.Display.fillCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, BLACK);
+      M5.Display.drawCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, WHITE);
+    } else {
+      // OFF state
+      M5.Display.fillCircle(switchX + toggleRadius + 4, switchY + switchHeight / 2, toggleRadius, WHITE);
+    }
   }
   Serial.println("✓ Device status displayed");
   
   // Test 5: Display Update Timestamp
   Serial.println("\nTest 5: Display Update Timestamp");
-  M5.Display.setCursor(10, 250);
+  M5.Display.setCursor(10, 280);
   M5.Display.print("Test time: ");
   M5.Display.print(millis() / 1000);
   M5.Display.print("s");
@@ -97,9 +115,9 @@ void loop() {
   if (millis() - lastUpdate > 5000) {
     lastUpdate = millis();
     
-    // Update timestamp on display
-    M5.Display.fillRect(10, 250, 200, 20, WHITE);
-    M5.Display.setCursor(10, 250);
+    // Update timestamp on display (clear with black background)
+    M5.Display.fillRect(10, 280, 200, 20, BLACK);
+    M5.Display.setCursor(10, 280);
     M5.Display.print("Running time: ");
     M5.Display.print(millis() / 1000);
     M5.Display.print("s");

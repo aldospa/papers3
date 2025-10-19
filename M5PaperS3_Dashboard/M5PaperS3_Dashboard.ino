@@ -233,9 +233,11 @@ void updateAllDeviceStatuses() {
  * Display status on M5PaperS3 screen
  */
 void displayStatus() {
-  M5.Display.clear();
+  // Fill screen with black for white-on-black display
+  M5.Display.fillScreen(BLACK);
   M5.Display.setTextSize(1);
-  M5.Display.setTextColor(BLACK, WHITE);
+  M5.Display.setTextColor(WHITE, BLACK);
+  M5.Display.setBrightness(255); // Set maximum brightness
   
   // Title
   M5.Display.setCursor(10, 10);
@@ -265,25 +267,38 @@ void displayStatus() {
   
   M5.Display.setTextSize(1);
   for (int i = 0; i < 4; i++) {
-    int yPos = 120 + (i * 30);
+    int yPos = 120 + (i * 40);
     M5.Display.setCursor(10, yPos);
     M5.Display.print(deviceNames[i]);
-    M5.Display.print(": ");
     
-    // Draw status indicator
+    // Draw graphical toggle switch indicator
+    int switchX = 200;
+    int switchY = yPos - 2;
+    int switchWidth = 40;
+    int switchHeight = 20;
+    int toggleRadius = 8;
+    
+    // Draw switch background (rounded rectangle)
+    M5.Display.drawRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
+    
     if (deviceStates[i]) {
-      M5.Display.print("[ON]");
+      // ON state - fill background and draw toggle on right
+      M5.Display.fillRoundRect(switchX, switchY, switchWidth, switchHeight, 10, WHITE);
+      M5.Display.fillCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, BLACK);
+      M5.Display.drawCircle(switchX + switchWidth - toggleRadius - 4, switchY + switchHeight / 2, toggleRadius, WHITE);
     } else {
-      M5.Display.print("[OFF]");
+      // OFF state - draw toggle on left
+      M5.Display.fillCircle(switchX + toggleRadius + 4, switchY + switchHeight / 2, toggleRadius, WHITE);
     }
     
     // Show MAC address
-    M5.Display.setCursor(15, yPos + 15);
+    M5.Display.setCursor(15, yPos + 18);
+    M5.Display.setTextSize(1);
     M5.Display.print(DEVICE_MACS[i]);
   }
   
   // Last update time
-  M5.Display.setCursor(10, 250);
+  M5.Display.setCursor(10, 280);
   M5.Display.print("Last update: ");
   M5.Display.print(millis() / 1000);
   M5.Display.print("s");
@@ -294,8 +309,9 @@ void displayStatus() {
  */
 void setupDisplay() {
   M5.Display.setRotation(1);
-  M5.Display.fillScreen(WHITE);
-  M5.Display.setTextColor(BLACK);
+  M5.Display.fillScreen(BLACK); // Black background for white text
+  M5.Display.setTextColor(WHITE, BLACK); // White text on black background
+  M5.Display.setBrightness(255); // Set maximum brightness
   M5.Display.setTextSize(1);
   
   // Show initialization message

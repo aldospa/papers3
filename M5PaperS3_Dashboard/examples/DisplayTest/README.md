@@ -44,11 +44,13 @@ Test 5: Display Update Timestamp
 ```
 
 ### E-Paper Display
-The display should show:
+The display should show (white text on black background for better visibility):
 - **Title**: "M5PaperS3 Display Test"
 - **Welcome message**: "If you can read this, the display works!"
 - **Connection Status**: WiFi and MQTT (shown as Not Connected)
-- **Device Status**: 4 switches with alternating ON/OFF states
+- **Device Status**: 4 switches with **graphical toggle indicators** showing alternating ON/OFF states
+  - ON states appear with filled toggles on the right
+  - OFF states appear with empty toggles on the left
 - **Timestamp**: Running time in seconds (updates every 5 seconds)
 
 ## How to Use
