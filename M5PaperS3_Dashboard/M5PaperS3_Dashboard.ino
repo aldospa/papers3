@@ -301,8 +301,8 @@ void displayStatus() {
     
     // Calculate toggle switch dimensions dynamically
     // Switch should be on the right side, taking ~40% of width
-    int switchWidth = min(180, contentWidth * 0.4);
-    int switchHeight = min(80, switchSpacing - 20);
+    int switchWidth = min(180, (int)(contentWidth * 0.4));
+    int switchHeight = min(80, (int)(switchSpacing - 20));
     int switchX = screenWidth - margin - switchWidth - 10;
     int switchY = yPos - 5;
     int toggleRadius = switchHeight / 3;
