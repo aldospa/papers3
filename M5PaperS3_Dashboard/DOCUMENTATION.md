@@ -9,18 +9,23 @@ This project implements a modern dashboard controller for the M5PaperS3 board th
 ### System Components
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    M5PaperS3 Board                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │   WiFi       │  │   MQTT       │  │  Web Server  │     │
-│  │   Module     │  │   Client     │  │              │     │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
-│         │                  │                  │              │
-│  ┌──────┴──────────────────┴──────────────────┴───────┐   │
-│  │           M5SwitchC6 Controller                     │   │
-│  │           (Serial Communication)                    │   │
-│  └──────────────────────┬──────────────────────────────┘   │
-└─────────────────────────┼──────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    M5PaperS3 Board                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │   WiFi       │  │   MQTT       │  │  Web Server  │         │
+│  │   Module     │  │   Client     │  │              │         │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘         │
+│         │                  │                  │                  │
+│  ┌──────┴──────────────────┴──────────────────┴───────┐        │
+│  │           M5SwitchC6 Controller                     │        │
+│  │           (Serial Communication)                    │        │
+│  └──────────────────────┬──────────────────────────────┘        │
+│                         │                                        │
+│  ┌──────────────────────┴──────────────────────────────┐        │
+│  │              E-Paper Display Module                 │        │
+│  │         (Real-time Status Visualization)            │        │
+│  └─────────────────────────────────────────────────────┘        │
+└─────────────────────────┼────────────────────────────────────────┘
                           │
          ┌────────────────┼────────────────┐
          │                │                │
@@ -39,7 +44,8 @@ This project implements a modern dashboard controller for the M5PaperS3 board th
 4. **M5SwitchC6 → Device**: Commands transmitted to physical devices
 5. **Device → M5SwitchC6**: Status responses returned
 6. **M5SwitchC6 → M5PaperS3**: Responses forwarded via Serial
-7. **M5PaperS3 → MQTT Broker**: Status updates published (optional)
+7. **M5PaperS3 → E-Paper Display**: Status displayed on screen (immediate update on state change)
+8. **M5PaperS3 → MQTT Broker**: Status updates published (optional)
 
 ## File Structure
 
@@ -84,6 +90,13 @@ Configures MQTT client:
 Initializes web server:
 - Registers route handlers
 - Starts HTTP server on port 80
+
+#### `setupDisplay()`
+Initializes e-paper display:
+- Sets display rotation
+- Clears screen with white background
+- Sets text color to black
+- Shows initialization message
 
 ### Device Control Functions
 
@@ -145,6 +158,35 @@ Generates HTML for dashboard:
 - Generates device cards
 - Adds control buttons
 
+### Display Functions
+
+#### `displayStatus()`
+Updates e-paper display with current status using full-screen layout:
+- Shows dashboard title with large fonts (size 3)
+- Displays WiFi and MQTT connection status (size 2)
+- Shows device IP address
+- Lists all 4 devices with large graphical toggle switches (140x70 pixels each)
+- Displays MAC addresses and ON/OFF state for each device
+- Shows last update timestamp
+- Stores touch areas for each toggle switch
+- Utilizes entire 540x960 pixel screen with scaled fonts
+- Called immediately after state changes for minimal delay
+
+#### `setupDisplay()`
+Initializes the display hardware:
+- Configures display rotation
+- Sets up text rendering with white-on-black color scheme
+- Sets maximum brightness (255)
+- Shows initialization screen with large fonts
+
+#### `handleTouch()`
+Processes touch input on toggle switches:
+- Reads touch coordinates from M5.Touch
+- Checks if touch falls within any toggle switch area
+- Toggles the corresponding device on/off when touched
+- Provides direct device control from the touchscreen
+- Logs touch events to Serial for debugging
+
 ### Main Loop Function
 
 #### `loop()`
@@ -153,7 +195,9 @@ Main execution loop:
 - Maintains MQTT connection
 - Performs periodic status updates
 - Checks WiFi connection
+- Updates display every 2 seconds
 - Updates M5 device state
+- Handles touch input for toggle switches
 
 ## Data Structures
 
@@ -172,6 +216,7 @@ bool wifiConnected          // WiFi connection status
 bool mqttEnabled            // MQTT enabled flag
 bool mqttConnected          // MQTT connection status
 unsigned long lastStatusUpdate  // Last status check timestamp
+unsigned long lastDisplayUpdate // Last display update timestamp
 ```
 
 ## Web Interface Design
@@ -304,8 +349,10 @@ All operations are logged to Serial at 115200 baud:
 ### Timing
 - 10ms delay in main loop
 - 100ms delay between device queries
-- 5 second interval for periodic updates
+- 2 second interval for display updates
+- 5 second interval for periodic status updates
 - 10 second timeout for device commands
+- Immediate display update on state changes
 
 ### Memory
 - Minimal string allocations

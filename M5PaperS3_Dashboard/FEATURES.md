@@ -8,6 +8,18 @@
 - **Status Queries**: Real-time status checking for each device
 - **Automatic Updates**: Status automatically synchronized with physical device state
 
+### E-Paper Display
+- **Real-Time Status Display**: Built-in M5PaperS3 e-paper screen shows live device status
+- **Full-Screen Layout**: Large fonts and graphics utilizing the entire 540x960 pixel display
+- **Touch-Enabled Controls**: Tap toggle switches directly on the touchscreen to control devices
+- **Connection Indicators**: Visual WiFi and MQTT connection status
+- **Large Toggle Switches**: Each device shown with prominent graphical ON/OFF toggle (140x70 pixels)
+- **IP Address Display**: Current network IP address visible on screen
+- **Minimal Delay**: Display updates immediately after state changes
+- **Periodic Refresh**: Automatic updates every 2 seconds
+- **Low Power Consumption**: E-paper display maintains status even when not refreshing
+- **Intuitive Interface**: No web browser needed - control everything from the touchscreen
+
 ### Web Interface
 - **Modern UI Design**: 
   - Gradient background (purple-blue theme)
@@ -60,6 +72,7 @@
 
 ### Hardware
 - **Platform**: M5PaperS3 (ESP32-based)
+- **Display**: Built-in E-Paper screen (540x960 pixels, 4.7 inch)
 - **Communication**: Serial (RX pin 16)
 - **Devices**: M5SwitchC6 switches (up to 4)
 - **Network**: WiFi 2.4GHz
@@ -96,11 +109,13 @@
 ## 📱 User Experience
 
 ### Visual Feedback
-- Real-time status updates
-- Color-coded indicators
+- Real-time status updates on e-paper display
+- E-paper screen shows device states at a glance
+- Web interface with color-coded indicators
 - Responsive button interactions
 - Clear error messaging in Serial Monitor
-- Connection status always visible
+- Connection status always visible on both display and web interface
+- Immediate display refresh on state changes
 
 ### Accessibility
 - Large, touch-friendly buttons
@@ -163,6 +178,9 @@
 - Mobile app integration
 - Scene management
 - Voice control integration
+- Touch screen controls on display
+- Graphical status indicators on display
+- Historical status graphs
 
 ## 📦 Deliverables
 

@@ -5,6 +5,7 @@ A modern dashboard controller for the M5PaperS3 board that controls 4 M5SwitchC6
 ## Features
 
 - **4 Toggle Switches**: Control 4 M5SwitchC6 devices independently
+- **E-Paper Display**: Real-time status display on M5PaperS3 screen showing device states
 - **Web Interface**: Modern, responsive web UI for remote control
 - **WiFi Connectivity**: Automatic WiFi connection with reconnection support
 - **MQTT Support**: MQTT-enabled by default for device communication
@@ -57,10 +58,27 @@ The sketch is configured for 4 M5SwitchC6 devices with the following MAC address
 1. Open the sketch in Arduino IDE
 2. Select **M5Stack-PAPER** as the board (Tools > Board > ESP32 Arduino > M5Stack-PAPER)
 3. Install required libraries
-4. Update device MAC addresses if needed
-5. Upload to your M5PaperS3 board
+4. (Optional) Test the display first using `examples/DisplayTest/DisplayTest.ino`
+5. Update device MAC addresses if needed
+6. Upload to your M5PaperS3 board
 
 ## Usage
+
+### E-Paper Display
+
+The M5PaperS3 built-in e-paper display shows status information with **white text on black background** for optimal visibility and brightness, using **large fonts that fill the entire screen**:
+- **Connection Status**: WiFi and MQTT connection indicators
+- **IP Address**: Current device IP address
+- **Device Status**: Real-time status for all 4 switches with **large graphical toggle indicators**
+  - ON state: Toggle filled on the right side with highlight
+  - OFF state: Toggle empty on the left side
+  - **Touch-enabled**: Tap any toggle switch on the screen to control the device directly
+- **MAC Addresses**: Each device's MAC address
+- **Last Update Time**: Timestamp of the last status update
+
+The display automatically updates every 2 seconds and immediately after any device state change, ensuring minimal delay between toggle actions and display updates. The graphical toggle switches provide clear visual feedback matching modern UI design patterns.
+
+**Touch Controls**: Simply tap on any of the 4 large toggle switches displayed on the screen to turn devices on or off. No need to use the web interface - full control is available directly from the M5PaperS3 touchscreen!
 
 ### Web Interface
 
@@ -70,7 +88,7 @@ Once the device boots up and connects to WiFi, access the web interface at:
 http://<device-ip-address>
 ```
 
-The IP address will be displayed in the Serial Monitor.
+The IP address will be displayed in the Serial Monitor and on the e-paper display.
 
 #### Web Interface Features:
 
@@ -232,6 +250,23 @@ const String DEVICE_MACS[4] = {
 - Check Serial Monitor for the IP address
 - Ensure you're on the same network as the M5PaperS3
 - Try accessing via the IP address directly
+
+### Display Not Working
+- Run the `examples/DisplayTest/DisplayTest.ino` sketch to verify display functionality
+- Check that M5Unified library is properly installed
+- Verify board selection is M5Stack-PAPER
+- E-paper displays have slower refresh rates - wait a few seconds for updates
+
+### Touch Controls Not Working
+- Check Serial Monitor (115200 baud) for touch debug output:
+  - Look for "Touch enabled: Yes" message during startup
+  - Watch for "Touch detected at: X=..., Y=..." messages when tapping the screen
+  - Verify touch coordinates fall within the displayed touch areas (shown at startup)
+- If touch shows "N/A" at the bottom of the screen, the touch controller is not initialized
+- Try power cycling the device completely
+- Ensure M5Unified library is up to date (version 0.1.13 or higher recommended)
+- The display shows "Touch: Ready" at the bottom when touch is working correctly
+- Touch areas are defined as: Switch 0-3 at X=320-460, Y varies by device position
 
 ## License
 

@@ -56,6 +56,12 @@
 #define QUERY_DELAY_MS 100           // Delay between device queries
 
 // ============================================================================
+// Display Configuration
+// ============================================================================
+#define DISPLAY_UPDATE_INTERVAL 2000  // Update display every 2 seconds
+#define DISPLAY_ROTATION 1            // Display rotation (0-3)
+
+// ============================================================================
 // Serial Configuration
 // ============================================================================
 #define SERIAL_BAUD_RATE 115200
