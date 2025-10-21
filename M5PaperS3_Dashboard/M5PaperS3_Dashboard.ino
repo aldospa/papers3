@@ -297,9 +297,10 @@ void displayStatus() {
     touchAreas[i].height = switchHeight;
     touchAreas[i].deviceIndex = i;
     
-    // Draw switch background (rounded rectangle)
+    // Draw switch background (rounded rectangle with extra border for touch visibility)
     M5.Display.drawRoundRect(switchX, switchY, switchWidth, switchHeight, 20, WHITE);
     M5.Display.drawRoundRect(switchX + 1, switchY + 1, switchWidth - 2, switchHeight - 2, 19, WHITE);
+    M5.Display.drawRoundRect(switchX + 2, switchY + 2, switchWidth - 4, switchHeight - 4, 18, WHITE);
     
     if (deviceStates[i]) {
       // ON state - fill background and draw toggle on right
@@ -331,6 +332,11 @@ void displayStatus() {
   M5.Display.print("Updated: ");
   M5.Display.print(millis() / 1000);
   M5.Display.print("s");
+  
+  // Debug: Display touch status
+  M5.Display.setCursor(20, 920);
+  M5.Display.print("Touch: ");
+  M5.Display.print(M5.Touch.isEnabled() ? "Ready" : "N/A");
 }
 
 /**
@@ -358,32 +364,60 @@ void setupDisplay() {
  * Handle touch input on toggle switches
  */
 void handleTouch() {
-  auto touch = M5.Touch.getDetail();
-  
-  if (touch.wasPressed()) {
-    int touchX = touch.x;
-    int touchY = touch.y;
+  // Check if touch is available and update touch state
+  if (M5.Touch.isEnabled()) {
+    auto t = M5.Touch.getDetail();
     
-    // Check if touch is within any toggle switch area
-    for (int i = 0; i < 4; i++) {
-      if (touchX >= touchAreas[i].x && 
-          touchX <= touchAreas[i].x + touchAreas[i].width &&
-          touchY >= touchAreas[i].y && 
-          touchY <= touchAreas[i].y + touchAreas[i].height) {
-        
-        // Toggle the device state
-        int deviceIndex = touchAreas[i].deviceIndex;
-        Serial.print("Touch detected on ");
-        Serial.println(deviceNames[deviceIndex]);
-        
-        if (deviceStates[deviceIndex]) {
-          turnDeviceOff(deviceIndex);
-        } else {
-          turnDeviceOn(deviceIndex);
+    // Check for touch press event
+    if (t.wasPressed() || t.isPressed()) {
+      int touchX = t.x;
+      int touchY = t.y;
+      
+      // Debug output
+      Serial.print("Touch detected at: X=");
+      Serial.print(touchX);
+      Serial.print(", Y=");
+      Serial.println(touchY);
+      
+      // Check if touch is within any toggle switch area
+      for (int i = 0; i < 4; i++) {
+        if (touchX >= touchAreas[i].x && 
+            touchX <= touchAreas[i].x + touchAreas[i].width &&
+            touchY >= touchAreas[i].y && 
+            touchY <= touchAreas[i].y + touchAreas[i].height) {
+          
+          // Toggle the device state
+          int deviceIndex = touchAreas[i].deviceIndex;
+          Serial.print("Touch matched switch ");
+          Serial.print(deviceIndex);
+          Serial.print(": ");
+          Serial.println(deviceNames[deviceIndex]);
+          
+          // Add debouncing - only toggle if it's a new press
+          static unsigned long lastTouchTime = 0;
+          static int lastTouchedDevice = -1;
+          unsigned long currentTime = millis();
+          
+          if (t.wasPressed() || (currentTime - lastTouchTime > 500) || (lastTouchedDevice != deviceIndex)) {
+            if (deviceStates[deviceIndex]) {
+              turnDeviceOff(deviceIndex);
+            } else {
+              turnDeviceOn(deviceIndex);
+            }
+            lastTouchTime = currentTime;
+            lastTouchedDevice = deviceIndex;
+          }
+          
+          break; // Only handle one touch at a time
         }
-        
-        break; // Only handle one touch at a time
       }
+    }
+  } else {
+    // Touch is not enabled, log once
+    static bool loggedOnce = false;
+    if (!loggedOnce) {
+      Serial.println("Touch is not enabled on this device");
+      loggedOnce = true;
     }
   }
 }
@@ -545,8 +579,10 @@ void setupWebServer() {
  * Setup function - runs once at startup
  */
 void setup() {
-  // Initialize M5 device
-  M5.begin();
+  // Initialize M5 device with touch enabled
+  auto cfg = M5.config();
+  cfg.clear_display = true;
+  M5.begin(cfg);
   
   // Initialize Serial
   Serial.begin(115200);
@@ -581,6 +617,23 @@ void setup() {
   
   // Display initial status
   displayStatus();
+  
+  // Print touch area information for debugging
+  Serial.println("\n=== Touch Areas ===");
+  for (int i = 0; i < 4; i++) {
+    Serial.print("Switch ");
+    Serial.print(i);
+    Serial.print(": X=");
+    Serial.print(touchAreas[i].x);
+    Serial.print("-");
+    Serial.print(touchAreas[i].x + touchAreas[i].width);
+    Serial.print(", Y=");
+    Serial.print(touchAreas[i].y);
+    Serial.print("-");
+    Serial.println(touchAreas[i].y + touchAreas[i].height);
+  }
+  Serial.print("Touch enabled: ");
+  Serial.println(M5.Touch.isEnabled() ? "Yes" : "No");
   
   Serial.println("\n=== Setup Complete ===");
   Serial.println("Dashboard ready for operation");

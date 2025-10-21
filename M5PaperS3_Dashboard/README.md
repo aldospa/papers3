@@ -257,6 +257,17 @@ const String DEVICE_MACS[4] = {
 - Verify board selection is M5Stack-PAPER
 - E-paper displays have slower refresh rates - wait a few seconds for updates
 
+### Touch Controls Not Working
+- Check Serial Monitor (115200 baud) for touch debug output:
+  - Look for "Touch enabled: Yes" message during startup
+  - Watch for "Touch detected at: X=..., Y=..." messages when tapping the screen
+  - Verify touch coordinates fall within the displayed touch areas (shown at startup)
+- If touch shows "N/A" at the bottom of the screen, the touch controller is not initialized
+- Try power cycling the device completely
+- Ensure M5Unified library is up to date (version 0.1.13 or higher recommended)
+- The display shows "Touch: Ready" at the bottom when touch is working correctly
+- Touch areas are defined as: Switch 0-3 at X=320-460, Y varies by device position
+
 ## License
 
 This project is provided as-is for use with M5Stack products.
